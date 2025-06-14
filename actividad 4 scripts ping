@@ -1,0 +1,31 @@
+# Ruta del archivo de log
+$logPath = "C:\\Scripts\\ping_log.txt"
+
+# Dirección IP o dominio a hacer ping
+$target = "8.8.8.8"
+
+# Crear carpeta si no existe
+$folderPath = [System.IO.Path]::GetDirectoryName($logPath)
+if (-not (Test-Path $folderPath)) {
+    New-Item -Path $folderPath -ItemType Directory
+}
+
+# Bucle infinito
+while ($true) {
+    $date = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $result = Test-Connection -ComputerName $target -Count 1 -Quiet
+
+    if ($result -eq $true) {
+        $status = "OK"
+    } else {
+        $status = "FALLÓ"
+    }
+
+    $line = $date + " - Estado del ping a " + $target + ": " + $status
+    $line | Out-File -FilePath $logPath -Append
+
+    Start-Sleep -Seconds 600
+}
+
+
+
